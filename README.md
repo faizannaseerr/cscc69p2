@@ -1,1 +1,2 @@
-# cscc69p2
+# CSCC69-Pintos
+
