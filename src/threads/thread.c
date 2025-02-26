@@ -211,7 +211,7 @@ tid_t thread_create(const char *name, int priority,
 
 /* Set up PCB for user programs */
 #ifdef USERPROG
-    init_process_control_block(t);
+    initialize_pcb(t);
 #endif
 
     /* Add to run queue. */

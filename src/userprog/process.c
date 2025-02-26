@@ -20,7 +20,7 @@
 #include "threads/vaddr.h"
 #include "threads/synch.h"
 
-static void setup_args(char *save_ptr, void **esp, char *file_name);
+static void setup_arguments(char *save_ptr, void **esp, char *file_name);
 static thread_func start_process NO_RETURN;
 static bool load(const char *cmdline, void (**eip)(void), void **esp);
 
@@ -55,7 +55,7 @@ tid_t process_execute(const char *file_name)
 }
 
 /* Sets up the arguments passed through the user program */
-static void setup_args(char *save_ptr, void **esp, char *file_name) // double check this
+static void setup_arguments(char *save_ptr, void **esp, char *file_name) // double check this
 {
     int argc = 0;
     char *file_name_array[strlen(file_name)];
@@ -79,9 +79,10 @@ static void setup_args(char *save_ptr, void **esp, char *file_name) // double ch
     }
 
     /* Word align */
-    int num = 4 - ((int)(*esp) % 4);
-    *esp -= num;
-    memset(*esp, 0, num);
+    int alignment = (int)(*esp) % 4;
+    int padding = (alignment == 0) ? 0 : 4 - alignment;
+    *esp -= padding;
+    memset(*esp, 0, padding);
 
     /* Push NULL */
     *esp -= 4;
@@ -140,7 +141,7 @@ start_process(void *file_name_)
     /* Set up the stack, if success */
     if (success)
     {
-        setup_args(save_ptr, &if_.esp, file_name_copy);
+        setup_arguments(save_ptr, &if_.esp, file_name_copy);
     }
     struct child_thread *child = get_child_thread(thread_current()->parent, thread_current()->tid);
     sema_up(&child->sema_load);
@@ -568,7 +569,7 @@ install_page(void *upage, void *kpage, bool writable)
 }
 
 /* Initialize process control block (pcb) for a thread t */
-void init_process_control_block(struct thread *t)
+void initialize_pcb(struct thread *t)
 {
     struct pcb *pcb = malloc(sizeof(struct pcb));
     pcb->parent = thread_current();

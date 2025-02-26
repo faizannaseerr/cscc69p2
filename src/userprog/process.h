@@ -7,7 +7,7 @@ tid_t process_execute(const char *file_name);
 int process_wait(tid_t);
 void process_exit(void);
 void process_activate(void);
-void init_process_control_block(struct thread *t);
+void initialize_pcb(struct thread *t);
 void free_all_files(void);
 struct file *get_file_by_fd(int fd);
 struct list_elem *get_file_elem_by_fd(int fd);
